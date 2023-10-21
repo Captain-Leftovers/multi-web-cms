@@ -1,12 +1,13 @@
-import { UserButton } from "@clerk/nextjs"
+import checkUserAccess from '@/actions/checkUserAccess'
+import { UserButton } from '@clerk/nextjs'
 
-export default function page() {
+export default async function page() {
+	await checkUserAccess('motorcycle-shop')
 
-    
 
-return (
-  <div>
-     <UserButton afterSignOutUrl="/"/>
-  </div>
-  )
+	return (
+		<div>
+			<UserButton afterSignOutUrl="/" />
+		</div>
+	)
 }
