@@ -1,10 +1,15 @@
+'use client'
+
 import { usePickStoreModal } from '@/hooks/use-pick-store-modal'
 import { Modal } from '../ui/modal'
 import { Button } from '../ui/button'
+import { useClerk } from '@clerk/nextjs'
 
 export default function PickStoreModal() {
 	const pickStoreModal = usePickStoreModal()
 	const stores = usePickStoreModal((state) => state.stores)
+
+	const { signOut } = useClerk()
 
 	const onStoreClick = async (path: string) => {
 		window.location.assign(`/${path}`)
@@ -19,15 +24,32 @@ export default function PickStoreModal() {
 			className="max-w-sm sm:max-w-md lg:max-w-lg"
 		>
 			<div className="flex flex-col gap-4 mx-auto sm:px-10 py-4">
-				{stores?.map((store) => (
-					<Button
-						key={store.id}
-						onClick={() => onStoreClick(store.path)}
-						className="w-full"
-					>
-						{store.name}
-					</Button>
-				))}
+				{stores?.length !== 0 ? (
+					stores?.map((store) => (
+						<Button
+							key={store.id}
+							onClick={() => onStoreClick(store.path)}
+							className="w-full"
+						>
+							{store.name}
+						</Button>
+					))
+				) : (
+					<div className="flex flex-col gap-4 mx-auto sm:px-10 py-4">
+						<p className="text-center">
+							You don't have access to any stores yet.
+						</p>
+						<p className="text-center">
+							Contact your administrator to get access.
+						</p>
+						<p className="text-center">
+							Or sign in to create a store.
+						</p>
+						<Button onClick={() => signOut()} className="w-full mt-4">
+							Sign Out
+						</Button>
+					</div>
+				)}
 			</div>
 		</Modal>
 	)

@@ -44,3 +44,26 @@ model UserStore {
   storeId String
   store   Store  @relation(fields: [storeId], references: [id])
 }
+
+// Moto Shop  ------------------------
+
+model MotoItem {
+  id            String           @id @default(uuid())
+  make          String
+  model         String?
+  description   String?
+  price         Int?
+  images        MotoItemImages[]
+  pinned        Boolean          @default(false)
+  sold          Boolean          @default(false)
+  addedByUserId String
+}
+
+model MotoItemImages {
+  id         String   @id @default(uuid())
+  motoItemId String
+  url        String
+  motoItem   MotoItem @relation(fields: [motoItemId], references: [id])
+}
+
+// ----------------------------------- End of Moto Shop
