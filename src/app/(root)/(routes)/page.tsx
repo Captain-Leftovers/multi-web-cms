@@ -1,5 +1,5 @@
 import getStoresWithAccess from '@/actions/getStoresWithAccess'
-import StorSwitcher from '@/components/StorSwitcher'
+import StorSwitcher from '@/components/stor-switcher'
 import { auth } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 
@@ -10,7 +10,14 @@ export default async function Home() {
 		redirect('/sign-in')
 	}
 
-	const stores = await getStoresWithAccess(userId)
+	try {
+		const stores = await getStoresWithAccess(userId)
 
-	return <StorSwitcher stores={stores} />
+		if (!stores) {
+			return <div>You don't have access to any stores</div>
+		}
+		return <StorSwitcher stores={stores} />
+	} catch (error) {
+		console.log(error)
+	}
 }

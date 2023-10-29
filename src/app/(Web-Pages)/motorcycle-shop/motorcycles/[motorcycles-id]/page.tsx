@@ -1,11 +1,11 @@
 import Container from '@/components/ui/container'
-import AddNewMotorcycleForm from './components/add-new-motorcycle-form'
+import MotorcycleForm from './components/motorcycle-form'
 
 export default function NewMotorcyclesPage() {
 	return (
 		<main className="h-full w-full">
 			<Container>
-				<AddNewMotorcycleForm />
+				<MotorcycleForm initialData={null} />
 			</Container>
 		</main>
 	)

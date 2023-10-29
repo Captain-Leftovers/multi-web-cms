@@ -12,7 +12,7 @@ type StorSwitcherProps = {
 
 export default function StorSwitcher({stores}: StorSwitcherProps) {
     const {isOpen, onOpen} = usePickStoreModal();
-  
+
     useEffect(() => {
       if (!isOpen) {
         onOpen(stores);
