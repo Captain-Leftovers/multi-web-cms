@@ -19,13 +19,13 @@ const routesArr: RoutesType[] = [
 	{
 		href: '/motorcycle-shop',
 		label: 'Home',
-		description: 'Go to the Home Page',
 		targetSegment: null,
 	},
 	{
 		href: '/motorcycle-shop/motorcycles',
 		label: 'Motorcycles',
-		description: 'Go to the Motorcycles Page',
+		description:
+			'Click here to see all the motorcycles you uploaded and add new ones',
 		targetSegment: 'motorcycles',
 	},
 ]
@@ -35,8 +35,6 @@ type MainNavProps = {
 }
 export default function MainNav({ stores }: MainNavProps) {
 	const storeModal = usePickStoreModal()
-
-
 
 	return (
 		<nav className="mx-6 flex items-center space-x-4 lg:space-x-6">
@@ -52,18 +50,22 @@ export default function MainNav({ stores }: MainNavProps) {
 				</Button>
 			</div>
 			{routesArr.map((route) => (
-				<NavigationLink href={route.href} targetSegment={route.targetSegment} className='relative group text-sm font-medium transition-colors hover:text-black' >
-
+				<NavigationLink
+					href={route.href}
+					targetSegment={route.targetSegment}
+					className="relative group text-sm font-medium transition-colors hover:text-black"
+				>
 					<TooltipProvider>
 						<Tooltip>
-							<TooltipTrigger>
-								{route.label}
-							
-							</TooltipTrigger>
-							<TooltipContent>{route.description}</TooltipContent>
+							<TooltipTrigger> {route.label}</TooltipTrigger>
+							{!!route.description && (
+								<TooltipContent>
+									{route.description}
+								</TooltipContent>
+							)}
 						</Tooltip>
 					</TooltipProvider>
-					</NavigationLink>
+				</NavigationLink>
 			))}
 		</nav>
 	)
