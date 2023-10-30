@@ -92,7 +92,7 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	const removeImageFn = async (url: string) => {
 		setLoading(true)
 		try {
-			const response = await axios.post('/api/images/delete-image', {
+			const response = await axios.post('/api/motorcycle-shop/images/delete-image', {
 				url,
 			})
 

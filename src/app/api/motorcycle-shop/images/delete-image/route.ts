@@ -3,7 +3,7 @@ import {
 	generateSHA1,
 	generateSignature,
 	getCloudinaryIdFromUrl,
-} from '../../helpers/helpers'
+} from '@/helpers/server-helpers/server-helpers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req:NextRequest, res:NextResponse) {

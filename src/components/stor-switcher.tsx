@@ -17,7 +17,7 @@ export default function StorSwitcher({stores}: StorSwitcherProps) {
       if (!isOpen) {
         onOpen(stores);
       }
-    }, [isOpen, onOpen]);
+    }, [isOpen, onOpen, stores]);
   
 
 return null

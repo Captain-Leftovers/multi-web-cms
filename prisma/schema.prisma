@@ -43,6 +43,8 @@ model UserStore {
   userId  String
   storeId String
   store   Store  @relation(fields: [storeId], references: [id])
+
+  @@index([storeId, userId])
 }
 
 // Moto Shop  ------------------------
@@ -64,6 +66,8 @@ model MotoItemImages {
   motoItemId String
   url        String
   motoItem   MotoItem @relation(fields: [motoItemId], references: [id])
+
+  @@index([motoItemId])
 }
 
 // ----------------------------------- End of Moto Shop
