@@ -15,19 +15,21 @@ import {
 import { TooltipTrigger } from '@radix-ui/react-tooltip'
 
 import { usePathname } from 'next/navigation'
+import { isActiveLink } from '@/app/api/helpers/client-helpers'
 
 const routesArr: RoutesType[] = [
 	{
 		href: 'motorcycle-shop',
 		label: 'Home',
 		description: 'Go to the Home Page',
+		targetSegment: null
 		
 	},
 	{
 		href: 'motorcycle-shop/motorcycles',
 		label: 'Motorcycles',
 		description: 'Go to the Motorcycles Page',
-	
+		targetSegment: 'motorcycles'
 	},
 ]
 
@@ -41,7 +43,8 @@ export default function MainNav({ stores }: MainNavProps) {
 	const routes = routesArr.map((route) => ({
 		href: `/${route.href}`,
 		label: route.label,
-		active:pathname === `/${route.href}` || pathname === `/${route.href}/add-new`,
+		// active:pathname === `/${route.href}` || pathname === `/${route.href}/add-new`,
+		active : isActiveLink(route.targetSegment),
 		description: route.description,
 	}))
 		

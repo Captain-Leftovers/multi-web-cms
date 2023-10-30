@@ -25,6 +25,10 @@ export const getCloudinaryIdFromUrl = (url: string) => {
 	return imageId
 }
 
+
+
+
+
 //https://res.cloudinary.com/moto-revive/image/upload/v1698477643/moto/vnouuor0afqksuexurtf.png
 
 //https://res.cloudinary.com/moto-revive/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1698477643/moto/vnouuor0afqksuexurtf.png
