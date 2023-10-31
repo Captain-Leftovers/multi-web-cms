@@ -2,7 +2,6 @@
 
 import { DevTool } from '@hookform/devtools'
 
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ControllerRenderProps, useFieldArray, useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -28,17 +27,21 @@ import ImageUpload from '@/components/ui/image-upload'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 
 const formSchema = z.object({
 	make: z.string().min(2, 'Too short'),
 	model: z.string().optional(),
 	description: z.string().optional(),
 	price: z.number().positive().optional(),
-	images: z.object({
-		url: z.string().url(),
-	}).array(),
-	pinned: z.boolean().optional(),
+	images: z
+		.object({
+			url: z.string().url(),
+		})
+		.array(),
+	featured: z.boolean().optional(),
 	sold: z.boolean().optional(),
+	onHold: z.boolean().optional(),
 })
 
 type MotorcycleFormProps = {
@@ -57,8 +60,6 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	const toastMessage = initialData ? 'Item updated.' : 'Item created.'
 	const action = initialData ? 'Save changes' : 'Create'
 
-
-
 	// 1. Define your form.
 	const form = useForm<formValuesType>({
 		resolver: zodResolver(formSchema),
@@ -68,14 +69,16 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 			description: '',
 			price: undefined,
 			images: [],
-			pinned: false,
+			featured: false,
 			sold: false,
+			onHold: false,
 		},
 	})
 
-
-	 const {remove, append} = useFieldArray<formValuesType>({name:'images',control: form.control})
-
+	const { remove, append } = useFieldArray<formValuesType>({
+		name: 'images',
+		control: form.control,
+	})
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		console.log(values)
@@ -92,9 +95,12 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	const removeImageFn = async (url: string) => {
 		setLoading(true)
 		try {
-			const response = await axios.post('/api/motorcycle-shop/images/delete-image', {
-				url,
-			})
+			const response = await axios.post(
+				'/api/motorcycle-shop/images/delete-image',
+				{
+					url,
+				}
+			)
 
 			toast.success(response.data.message)
 			return true
@@ -106,8 +112,6 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 			setLoading(false)
 		}
 	}
-
-
 
 	return (
 		<>
@@ -146,14 +150,18 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 									<ImageUpload
 										value={field.value}
 										disabled={loading}
-										onChange={(url)=> {
-											append({url})
+										onChange={(url) => {
+											append({ url })
 										}}
 										onRemove={async (url) => {
-											if(await removeImageFn(url)){
-												remove(field.value.findIndex((image) => image.url === url))
+											if (await removeImageFn(url)) {
+												remove(
+													field.value.findIndex(
+														(image) =>
+															image.url === url
+													)
+												)
 											}
-												
 										}}
 									/>
 								</FormControl>
@@ -161,43 +169,42 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 							</FormItem>
 						)}
 					/>
-					<div className='flex gap-8'>
-
-					<FormField
-						control={form.control}
-						name="make"
-						render={({ field }) => (
-							<FormItem> 
-								<FormLabel></FormLabel>
-								<FormControl>
-									<Input
-										placeholder="Make like Honda, Yamaha, etc."
-										{...field}
-										disabled={loading}
+					<div className="flex gap-8">
+						<FormField
+							control={form.control}
+							name="make"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel></FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Make like Honda, Yamaha, etc."
+											{...field}
+											disabled={loading}
 										/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="model"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel></FormLabel>
-								<FormControl>
-									<Input
-										placeholder="Model like CBR, R1, etc."
-										{...field}
-										disabled={loading}
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="model"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel></FormLabel>
+									<FormControl>
+										<Input
+											placeholder="Model like CBR, R1, etc."
+											{...field}
+											disabled={loading}
 										/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-						</div>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
 					<FormField
 						control={form.control}
 						name="description"
@@ -206,7 +213,8 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 								<FormLabel></FormLabel>
 								<FormControl>
 									<Textarea
-									rows={5}
+										rows={5}
+										className="w-2/3"
 										placeholder="Description"
 										{...field}
 										disabled={loading}
@@ -223,19 +231,44 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 							<FormItem>
 								<FormLabel></FormLabel>
 								<FormControl>
-									<Input
-										placeholder="Price"
-										{...field}
-										disabled={loading}
+									<div className="flex items-center gap-2">
+										<Input
+											type="number"
+											className="w-auto"
+											placeholder="Price"
+											{...field}
+											disabled={loading}
+										/>
+										<p>BGN</p>
+									</div>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="featured"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel></FormLabel>
+								<FormControl>
+									<Switch
+										checked={field.value}
+										onCheckedChange={field.onChange}
 									/>
 								</FormControl>
+								<FormDescription>Featured</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
 				</form>
 			</Form>
-			<DevTool control={form.control} styles={{panel:{width:'500px',} }}/>
+			{/* <DevTool
+				control={form.control}
+				styles={{ panel: { width: '500px' } }}
+			/> */}
 		</>
 	)
 }

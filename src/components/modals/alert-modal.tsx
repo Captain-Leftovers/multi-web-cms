@@ -23,9 +23,6 @@ export default function AlertModal({
 
 	if (!isMounted) return null
 
-	console.log('alert modal');
-	console.log(isOpen);
-	
 	return (
 		<Modal
 			title="Are you sure?"
@@ -49,4 +46,3 @@ export default function AlertModal({
 		</Modal>
 	)
 }
-

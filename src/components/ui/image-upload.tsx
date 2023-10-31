@@ -40,7 +40,7 @@ export default function ImageUpload({
 	return (
 		<div>
 			<div className="mb-4 flex items-center gap-4 flex-wrap">
-				{!value.length ? <Image src={'/images/placeholder.png'} width={200} height={200} alt='placeholder' className='opacity-50' /> : value?.map(({url}) => (
+				{!value.length ? <Image src={'/images/placeholder.png'} width={200} height={200} alt='placeholder' className='opacity-50' priority /> : value?.map(({url}) => (
 					<div
 						key={url}
 						className="relative w-[200px] h-[200px] overflow-hidden border border-gray-500 rounded-md"

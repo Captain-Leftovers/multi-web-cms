@@ -51,6 +51,7 @@ export default function MainNav({ stores }: MainNavProps) {
 			</div>
 			{routesArr.map((route) => (
 				<NavigationLink
+					key={route.href}
 					href={route.href}
 					targetSegment={route.targetSegment}
 					className="relative group text-sm font-medium transition-colors hover:text-black"

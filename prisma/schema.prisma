@@ -56,9 +56,14 @@ model MotoItem {
   description   String?
   price         Int?
   images        MotoItemImages[]
-  pinned        Boolean          @default(false)
+  featured      Boolean          @default(false)
   sold          Boolean          @default(false)
+  onHold        Boolean          @default(false)
   addedByUserId String
+  updatedAt     DateTime         @updatedAt
+  createdAt     DateTime         @default(now())
+
+  @@index([sold, onHold])
 }
 
 model MotoItemImages {
