@@ -3,7 +3,7 @@ import MotorcycleForm from './components/motorcycle-form'
 
 export default function NewMotorcyclesPage() {
 	return (
-		<main className="h-full w-full">
+		<main className="h-full w-full py-10 ">
 			<Container>
 				<MotorcycleForm initialData={null} />
 			</Container>

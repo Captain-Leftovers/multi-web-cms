@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { GeistSans, GeistMono } from 'geist/font'
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import { ToastProvider } from '@/providers/toast-provider'
 import { ModalProvider } from '@/providers/modal-provider'
 
-const inter = Inter({ subsets: ['latin'] })
+
 
 export const metadata: Metadata = {
 	title: 'Multi Web CMS',
@@ -20,7 +20,7 @@ export default function RootLayout({
 	return (
 		<ClerkProvider>
 			<html lang="en">
-				<body className={`${inter.className} h-screen w-screen`}>
+				<body className={`${GeistSans.className} h-screen w-screen`}>
 					<ToastProvider />
 					<ModalProvider />
 					{children}

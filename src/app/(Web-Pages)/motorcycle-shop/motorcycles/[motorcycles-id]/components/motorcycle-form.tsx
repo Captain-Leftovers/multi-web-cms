@@ -28,12 +28,18 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import prismadb from '@/lib/prismadb'
+import { useUser } from '@clerk/nextjs'
 
 const formSchema = z.object({
 	make: z.string().min(2, 'Too short'),
 	model: z.string().optional(),
 	description: z.string().optional(),
-	price: z.number().positive().optional(),
+	price: z
+		.number()
+		.min(0)
+		.optional()
+		.transform((value) => (value === 0 ? undefined : value)),
 	images: z
 		.object({
 			url: z.string().url(),
@@ -54,6 +60,7 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	const [open, setOpen] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
+	const { user } = useUser()
 
 	const title = initialData ? 'Edit Item' : 'Create Item'
 	const description = initialData ? 'Edit Item' : 'Add a new Item'
@@ -80,12 +87,26 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 		control: form.control,
 	})
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values)
+	async function onSubmit(values: formValuesType) {
+		if(!user) return toast.error('You must be logged in to create an item.')
+		try {
+			setLoading(true)
+			const data = {...values, addedByUserId: user.id}
+			const res = await axios.post(
+				'/api/motorcycle-shop/motorcycles',
+				data
+			)
 
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
-		console.log(values)
+			toast.success(res.data.message)
+			router.push('/motorcycle-shop/motorcycles')
+			router.refresh()
+		} catch (error: any) {
+			if (error.message) {
+				return toast.error(error.message)
+			}
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	const onDelete = async () => {
@@ -95,12 +116,9 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	const removeImageFn = async (url: string) => {
 		setLoading(true)
 		try {
-			const response = await axios.post(
-				'/api/motorcycle-shop/images/delete-image',
-				{
-					url,
-				}
-			)
+			const response = await axios.post('/api/motorcycle-shop/images', {
+				url,
+			})
 
 			toast.success(response.data.message)
 			return true
@@ -135,7 +153,7 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 				)}
 			</div>
 			<Separator />
-			<Form {...form}>
+			<Form  {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
 					className="space-y-8 w-full px-2"
@@ -238,37 +256,82 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 											placeholder="Price"
 											{...field}
 											disabled={loading}
+											onChange={(e) =>
+												field.onChange(
+													parseFloat(
+														e.target.value
+													) || 0
+												)
+											}
 										/>
 										<p>BGN</p>
+										<p>{typeof field.value}</p>
 									</div>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
-					<FormField
-						control={form.control}
-						name="featured"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel></FormLabel>
-								<FormControl>
-									<Switch
-										checked={field.value}
-										onCheckedChange={field.onChange}
-									/>
-								</FormControl>
-								<FormDescription>Featured</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+					<div className="flex justify-around">
+						<FormField
+							control={form.control}
+							name="onHold"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel></FormLabel>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<FormDescription>On hold</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="sold"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel></FormLabel>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<FormDescription>Sold</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="featured"
+							render={({ field }) => (
+								<FormItem className="">
+									<FormLabel></FormLabel>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<FormDescription>Featured</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+					<Button disabled={loading} type="submit">Submit</Button>
 				</form>
 			</Form>
-			{/* <DevTool
+			<DevTool
 				control={form.control}
 				styles={{ panel: { width: '500px' } }}
-			/> */}
+			/>
 		</>
 	)
 }

@@ -53,7 +53,7 @@ model MotoItem {
   id            String           @id @default(uuid())
   make          String
   model         String?
-  description   String?
+  description   String? @db.Text
   price         Int?
   images        MotoItemImages[]
   featured      Boolean          @default(false)
