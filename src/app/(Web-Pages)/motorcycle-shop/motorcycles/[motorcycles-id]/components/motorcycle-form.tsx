@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { MotoItem } from '@prisma/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { Separator } from '@/components/ui/separator'
 import Heading from '@/components/ui/heading'
@@ -30,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import prismadb from '@/lib/prismadb'
 import { useUser } from '@clerk/nextjs'
+import { MotoItemWithImagesType } from '@/app/(Web-Pages)/motorcycle-shop/moto-shop-types'
 
 const formSchema = z.object({
 	make: z.string().min(2, 'Too short'),
@@ -43,6 +44,7 @@ const formSchema = z.object({
 	images: z
 		.object({
 			url: z.string().url(),
+			isCover: z.boolean(),
 		})
 		.array(),
 	featured: z.boolean().optional(),
@@ -50,17 +52,21 @@ const formSchema = z.object({
 	onHold: z.boolean().optional(),
 })
 
-type MotorcycleFormProps = {
-	initialData: MotoItem | null
-}
+type MotorcycleFormProps = {}
 
 type formValuesType = z.infer<typeof formSchema>
 
-export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
+export default function MotorcycleForm({}: MotorcycleFormProps) {
 	const [open, setOpen] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
 	const { user } = useUser()
+
+	const searchParams = useSearchParams()
+
+	const initialData: MotoItemWithImagesType = searchParams.get('data')
+		? JSON.parse(searchParams.get('data') as string)
+		: null
 
 	const title = initialData ? 'Edit Item' : 'Create Item'
 	const description = initialData ? 'Edit Item' : 'Add a new Item'
@@ -68,18 +74,33 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	const action = initialData ? 'Save changes' : 'Create'
 
 	// 1. Define your form.
+
+	const processedInitialData = initialData
+		? {
+				...initialData,
+				model: initialData.model || '',
+				make: initialData.make || '',
+				description: initialData.description || '',
+				price: initialData.price || undefined,
+				images: initialData.images || [],
+				featured: initialData.featured || false,
+				sold: initialData.sold || false,
+				onHold: initialData.onHold || false,
+		  }
+		: {
+				make: '',
+				model: '',
+				description: '',
+				price: undefined,
+				images: [],
+				featured: false,
+				sold: false,
+				onHold: false,
+		  }
+
 	const form = useForm<formValuesType>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {
-			make: '',
-			model: '',
-			description: '',
-			price: undefined,
-			images: [],
-			featured: false,
-			sold: false,
-			onHold: false,
-		},
+		defaultValues: processedInitialData,
 	})
 
 	const { remove, append } = useFieldArray<formValuesType>({
@@ -88,14 +109,22 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	})
 
 	async function onSubmit(values: formValuesType) {
-		if(!user) return toast.error('You must be logged in to create an item.')
+		if (!user)
+			return toast.error('You must be logged in to create an item.')
 		try {
 			setLoading(true)
-			const data = {...values, addedByUserId: user.id}
-			const res = await axios.post(
-				'/api/motorcycle-shop/motorcycles',
-				data
-			)
+			let res
+			if (!initialData) {
+				const data = { ...values, addedByUserId: user.id }
+				res = await axios.post('/api/motorcycle-shop/motorcycles', data)
+			} else {
+				const data = {
+					...values,
+					addedByUserId: initialData.addedByUserId,
+					id: initialData.id,
+				}
+				res = await axios.put('/api/motorcycle-shop/motorcycles', data)
+			}
 
 			toast.success(res.data.message)
 			router.push('/motorcycle-shop/motorcycles')
@@ -110,6 +139,23 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 	}
 
 	const onDelete = async () => {
+		setOpen(false)
+		if (!initialData) return
+		try {
+			setLoading(true)
+		
+			const res = await axios.delete(`/api/motorcycle-shop/motorcycles/${initialData.id}` )
+
+			toast.success(res.data.message)
+			router.push('/motorcycle-shop/motorcycles')
+			router.refresh()
+		} catch (error: any) {
+			if (error.message) {
+				return toast.error(error.message)
+			}
+		} finally {
+			setLoading(false)
+		}
 		console.log('delete pressed')
 	}
 
@@ -153,7 +199,7 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 				)}
 			</div>
 			<Separator />
-			<Form  {...form}>
+			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
 					className="space-y-8 w-full px-2"
@@ -168,8 +214,8 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 									<ImageUpload
 										value={field.value}
 										disabled={loading}
-										onChange={(url) => {
-											append({ url })
+										onChange={(url, isCover) => {
+											append({ url, isCover })
 										}}
 										onRemove={async (url) => {
 											if (await removeImageFn(url)) {
@@ -325,13 +371,15 @@ export default function MotorcycleForm({ initialData }: MotorcycleFormProps) {
 							)}
 						/>
 					</div>
-					<Button disabled={loading} type="submit">Submit</Button>
+					<Button disabled={loading} type="submit">
+						Submit
+					</Button>
 				</form>
 			</Form>
-			<DevTool
+			{/* <DevTool
 				control={form.control}
 				styles={{ panel: { width: '500px' } }}
-			/>
+			/> */}
 		</>
 	)
 }

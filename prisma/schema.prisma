@@ -70,6 +70,7 @@ model MotoItemImages {
   id         String   @id @default(uuid())
   motoItemId String
   url        String
+  isCover    Boolean  @default(false)
   motoItem   MotoItem @relation(fields: [motoItemId], references: [id])
 
   @@index([motoItemId])

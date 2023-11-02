@@ -1,8 +1,9 @@
+import { MotoItemWithImagesType } from '@/app/(Web-Pages)/motorcycle-shop/moto-shop-types'
 import prismadb from '@/lib/prismadb'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest, res: NextResponse) {
-	const body = await req.json()
+	const body:MotoItemWithImagesType = await req.json()
 
 	try {
 		const response = await prismadb.motoItem.create({
@@ -21,8 +22,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			},
 		})
 
-        console.log(response);
-        
+
 		if (response) {
 			return NextResponse.json({
 				message: `${body.make} ${!!body.model ? body.model : ''} added`,
@@ -32,3 +32,41 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		console.error(error)
 	}
 }
+
+export async function PUT(req: NextRequest, res: NextResponse) {
+	const body:MotoItemWithImagesType = await req.json()
+	 
+	try {
+		const response = await prismadb.motoItem.update({
+			where: {
+				id: body.id,
+			},
+			data:{
+				
+				make: body.make,
+				model: body.model,
+				price: body.price,
+				description: body.description,
+				featured: body.featured,
+				sold: body.sold,
+				onHold: body.onHold,
+				addedByUserId: body.addedByUserId,
+				images: {
+					deleteMany: {},
+					create: body.images,
+				},
+			},
+		})
+
+
+		if (response) {
+			return NextResponse.json({
+				message: `${body.make} ${!!body.model ? body.model : ''} added`,
+			})
+		}
+	} catch (error) {
+		console.error(error)
+	}
+}
+
+

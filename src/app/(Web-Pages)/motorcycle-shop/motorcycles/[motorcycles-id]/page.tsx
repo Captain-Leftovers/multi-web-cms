@@ -5,7 +5,7 @@ export default function NewMotorcyclesPage() {
 	return (
 		<main className="h-full w-full py-10 ">
 			<Container>
-				<MotorcycleForm initialData={null} />
+				<MotorcycleForm />
 			</Container>
 		</main>
 	)
