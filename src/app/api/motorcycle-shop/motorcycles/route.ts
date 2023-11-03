@@ -15,6 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 				images: {
 					create: body.images,
 				},
+				coverUrl: body.coverUrl,
 				featured: body.featured,
 				sold: body.sold,
 				onHold: body.onHold,
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 		if (response) {
 			return NextResponse.json({
-				message: `${body.make} ${!!body.model ? body.model : ''} added`,
+				message: `${body.make} ${!!body.model ? body.model : ''}`,
 			})
 		}
 	} catch (error) {
@@ -42,7 +43,8 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 				id: body.id,
 			},
 			data:{
-				
+				...body,
+				coverUrl: body.coverUrl,
 				make: body.make,
 				model: body.model,
 				price: body.price,
@@ -55,13 +57,14 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 					deleteMany: {},
 					create: body.images,
 				},
-			},
+			}
 		})
 
 
 		if (response) {
+			
 			return NextResponse.json({
-				message: `${body.make} ${!!body.model ? body.model : ''} added`,
+				message: `${body.make} ${!!body.model ? body.model : ''}`,
 			})
 		}
 	} catch (error) {

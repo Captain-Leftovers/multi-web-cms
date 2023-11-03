@@ -14,9 +14,24 @@ import { Expand } from 'lucide-react'
 
 export const revalidate = 0
 
-// TODO : fix form data page get the json props
+function getCoverImage(placeholder: string, imageData: MotoItemWithImagesType) {
+	if (imageData.coverUrl != null && imageData.images.length > 0 && imageData.images.findIndex(value => value.url === imageData.coverUrl) !== -1) {
+		return imageData.coverUrl
+		
+	} else if (imageData.images.length > 0) {
+		return imageData.images[0].url
+	} else {
+		return placeholder
+	}
 
+}
 export default function ({ imageData }: { imageData: MotoItemWithImagesType }) {
+
+	
+
+		const cover = getCoverImage('/images/placeholder.png', imageData)
+
+
 	return (
 		<div>
 			<Card className=" w-[400px] h-[400px] p-4 overflow-hidden bg-transparent  hover:scale-105 transition-all ease-out duration-500 hover:bg-stone-100 group">
@@ -34,11 +49,11 @@ export default function ({ imageData }: { imageData: MotoItemWithImagesType }) {
 					</Link>
 					<Image
 						src={
-							imageData?.images[0]
-								?.url || '/images/placeholder.png'
+							cover
 						}
 						alt={imageData.model != null ? imageData.model : ''}
 						fill
+						sizes='full'
 						className="object-cover object-center rounded-lg"
 					/>
 				</CardContent>

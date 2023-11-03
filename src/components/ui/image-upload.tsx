@@ -7,11 +7,14 @@ import Image from 'next/image'
 import { CldUploadWidget } from 'next-cloudinary'
 import toast from 'react-hot-toast'
 
+
 type ImageUploadProps = {
+	onCoverChange: (value: string) => void
 	disabled: boolean
-	onChange: (value: string, isCover: boolean) => void
+	onChange: (value: string) => void
 	onRemove: (value: string) => void
-	value: { url: string; isCover: boolean }[]
+	value: { url: string }[]
+	cover: string | undefined
 }
 
 export default function ImageUpload({
@@ -19,23 +22,20 @@ export default function ImageUpload({
 	onChange,
 	onRemove,
 	value,
+	onCoverChange,
 }: ImageUploadProps) {
 	const [isMounted, setIsMounted] = useState(false)
-
-	let setCover = false
-
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
 
 	const onUpload = (result: any) => {
-		toast.success('Image uploaded')
+		toast.success('photo uploaded')
 
-		onChange(result.info.secure_url, setCover)
+		onChange(result.info.secure_url)
 	}
 
 	if (!isMounted) return null
-
 	return (
 		<div>
 			<div className="mb-4 flex items-center gap-6 flex-wrap">
@@ -49,7 +49,7 @@ export default function ImageUpload({
 						priority
 					/>
 				) : (
-					value?.map(({ url,isCover }) => (
+					value?.map(({ url }) => (
 						<div
 							key={url}
 							className="relative w-[200px] h-[200px] overflow-hidden border border-gray-500 rounded-md p-4"
@@ -66,23 +66,24 @@ export default function ImageUpload({
 							<Button
 								className="absolute bottom-2 left-2 z-10 bg-green-600 hover:bg-green-600/80"
 								type="button"
-								onClick={() => isCover= true}
+								onClick={() => onCoverChange(url)}
 								variant="destructive"
 								size="sm"
 							>
-								cover
+								set as cover
 							</Button>
-
 							<Image
 								fill
 								className="object-contain"
 								alt="Image"
+								sizes="full"
 								src={url}
 							/>
 						</div>
 					))
 				)}
 			</div>
+
 			<CldUploadWidget onSuccess={onUpload} uploadPreset="moto-revive">
 				{({ open }) => {
 					const onClick = () => {

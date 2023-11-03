@@ -8,7 +8,9 @@ import { Separator } from '@/components/ui/separator'
 
 export default async function MotorcyclesPage() {
 	const motoItems = await getNotSoldMotoItems()
+	 
 
+	
 	let itemError =
 		motoItems.error instanceof Error ? motoItems.error.message : null
 
@@ -29,8 +31,6 @@ export default async function MotorcyclesPage() {
 					</Link>
 				</div>
 				<div className="">
-					<h1>Display all motos uploaded</h1>
-
 					<Separator className="my-8" />
 					<Carousel
 						motoImagesArr={

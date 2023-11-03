@@ -8,28 +8,7 @@ datasource db {
   relationMode = "prisma"
 }
 
-// model Post {
-//   id         Int                 @id @default(autoincrement())
-//   title      String
-//   categories CategoriesOnPosts[]
-// }
 
-// model Category {
-//   id    Int                 @id @default(autoincrement())
-//   name  String
-//   posts CategoriesOnPosts[]
-// }
-
-// model CategoriesOnPosts {
-//   post       Post     @relation(fields: [postId], references: [id])
-//   postId     Int // relation scalar field (used in the `@relation` attribute above)
-//   category   Category @relation(fields: [categoryId], references: [id])
-//   categoryId Int // relation scalar field (used in the `@relation` attribute above)
-//   assignedAt DateTime @default(now())
-//   assignedBy String
-
-//   @@id([postId, categoryId])
-// }
 
 model Store {
   id    String      @id @default(uuid())
@@ -56,6 +35,7 @@ model MotoItem {
   description   String? @db.Text
   price         Int?
   images        MotoItemImages[]
+  coverUrl      String?
   featured      Boolean          @default(false)
   sold          Boolean          @default(false)
   onHold        Boolean          @default(false)
@@ -70,7 +50,6 @@ model MotoItemImages {
   id         String   @id @default(uuid())
   motoItemId String
   url        String
-  isCover    Boolean  @default(false)
   motoItem   MotoItem @relation(fields: [motoItemId], references: [id])
 
   @@index([motoItemId])

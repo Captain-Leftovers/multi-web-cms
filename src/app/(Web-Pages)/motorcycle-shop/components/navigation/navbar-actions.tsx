@@ -22,4 +22,3 @@ export default function NavbarActions({}: NavbarActionsProps) {
 	)
 }
 
-//TODO : see about the actions section and what the button will do

@@ -1,9 +1,9 @@
 'use client'
 
-import { DevTool } from '@hookform/devtools'
+
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ControllerRenderProps, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +16,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { MotoItem } from '@prisma/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { Separator } from '@/components/ui/separator'
@@ -28,12 +27,11 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import prismadb from '@/lib/prismadb'
 import { useUser } from '@clerk/nextjs'
 import { MotoItemWithImagesType } from '@/app/(Web-Pages)/motorcycle-shop/moto-shop-types'
 
 const formSchema = z.object({
-	make: z.string().min(2, 'Too short'),
+	make: z.string().min(2, 'Make must be at least 2 characters.'),
 	model: z.string().optional(),
 	description: z.string().optional(),
 	price: z
@@ -44,9 +42,9 @@ const formSchema = z.object({
 	images: z
 		.object({
 			url: z.string().url(),
-			isCover: z.boolean(),
 		})
 		.array(),
+	coverUrl: z.string().url().optional(),
 	featured: z.boolean().optional(),
 	sold: z.boolean().optional(),
 	onHold: z.boolean().optional(),
@@ -70,10 +68,8 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 
 	const title = initialData ? 'Edit Item' : 'Create Item'
 	const description = initialData ? 'Edit Item' : 'Add a new Item'
-	const toastMessage = initialData ? 'Item updated.' : 'Item created.'
+	const toastMessage = initialData ? 'updated.' : 'created.'
 	const action = initialData ? 'Save changes' : 'Create'
-
-	// 1. Define your form.
 
 	const processedInitialData = initialData
 		? {
@@ -86,6 +82,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 				featured: initialData.featured || false,
 				sold: initialData.sold || false,
 				onHold: initialData.onHold || false,
+				coverUrl: initialData.coverUrl || undefined,
 		  }
 		: {
 				make: '',
@@ -96,6 +93,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 				featured: false,
 				sold: false,
 				onHold: false,
+				coverUrl: undefined,
 		  }
 
 	const form = useForm<formValuesType>({
@@ -126,7 +124,8 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 				res = await axios.put('/api/motorcycle-shop/motorcycles', data)
 			}
 
-			toast.success(res.data.message)
+			
+			toast.success(`${res.data.message} ${toastMessage}`)
 			router.push('/motorcycle-shop/motorcycles')
 			router.refresh()
 		} catch (error: any) {
@@ -143,8 +142,10 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 		if (!initialData) return
 		try {
 			setLoading(true)
-		
-			const res = await axios.delete(`/api/motorcycle-shop/motorcycles/${initialData.id}` )
+
+			const res = await axios.delete(
+				`/api/motorcycle-shop/motorcycles/${initialData.id}`
+			)
 
 			toast.success(res.data.message)
 			router.push('/motorcycle-shop/motorcycles')
@@ -156,7 +157,6 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 		} finally {
 			setLoading(false)
 		}
-		console.log('delete pressed')
 	}
 
 	const removeImageFn = async (url: string) => {
@@ -213,9 +213,15 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 								<FormControl>
 									<ImageUpload
 										value={field.value}
+										cover={form.getValues('coverUrl')}
 										disabled={loading}
-										onChange={(url, isCover) => {
-											append({ url, isCover })
+										onChange={(url) => {
+											append({ url })
+										}}
+										onCoverChange={(
+											cover: string | undefined
+										) => {
+											form.setValue('coverUrl', cover)
 										}}
 										onRemove={async (url) => {
 											if (await removeImageFn(url)) {
@@ -372,14 +378,11 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 						/>
 					</div>
 					<Button disabled={loading} type="submit">
-						Submit
+					{action}
 					</Button>
 				</form>
 			</Form>
-			{/* <DevTool
-				control={form.control}
-				styles={{ panel: { width: '500px' } }}
-			/> */}
+		
 		</>
 	)
 }

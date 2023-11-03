@@ -8,7 +8,6 @@ import { redirect } from 'next/navigation'
 
 export default authMiddleware({
 	publicRoutes: ['/api/:path*'],
-	// TODO secure urls that are not public
 	
 })
 

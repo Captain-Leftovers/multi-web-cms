@@ -11,6 +11,7 @@ export default function Carousel({ motoImagesArr, errMessage }: CarouselProps) {
 	if (errMessage) {
 		toast.error(errMessage)
 	}
+	
 
 	return (
 		<div className="flex gap-8 overflow-hidden flex-wrap">
