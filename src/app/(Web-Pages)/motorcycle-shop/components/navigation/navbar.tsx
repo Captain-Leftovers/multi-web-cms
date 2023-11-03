@@ -10,7 +10,7 @@ export const revalidate = 0
 export default async function Navbar() {
 	const { userId } = await checkUserAccess('motorcycle-shop')
 
-	const stores = await getStoresWithAccess(userId)
+	const stores = await getStoresWithAccess(userId) || []
 
 	return (
 		<div className="z-50  h-16">
