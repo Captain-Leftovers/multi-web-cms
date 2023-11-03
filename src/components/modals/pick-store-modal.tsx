@@ -37,7 +37,7 @@ export default function PickStoreModal() {
 				) : (
 					<div className="flex flex-col gap-4 mx-auto sm:px-10 py-4">
 						<p className="text-center">
-							You don't have access to any stores yet.
+							You don$apos;t have access to any stores yet.
 						</p>
 						<p className="text-center">
 							Contact your administrator to get access.

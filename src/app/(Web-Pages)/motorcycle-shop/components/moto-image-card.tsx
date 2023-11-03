@@ -25,9 +25,8 @@ function getCoverImage(placeholder: string, imageData: MotoItemWithImagesType) {
 	}
 
 }
-export default function ({ imageData }: { imageData: MotoItemWithImagesType }) {
+export default function MotoImageCard({ imageData }: { imageData: MotoItemWithImagesType }) {
 
-	
 
 		const cover = getCoverImage('/images/placeholder.png', imageData)
 

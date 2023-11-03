@@ -14,7 +14,7 @@ export default async function Home() {
 		const stores = await getStoresWithAccess(userId)
 
 		if (!stores) {
-			return <div>You don't have access to any stores</div>
+			return <div>You don$quot;t have access to any stores</div>
 		}
 		return <StorSwitcher stores={stores} />
 	} catch (error) {
