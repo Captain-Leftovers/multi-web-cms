@@ -11,10 +11,21 @@ export const generateSignature = (publicId: string, apiSecret: string) => {
 	return `public_id=${publicId}&timestamp=${timestamp}${apiSecret}`
 }
 
-export const getCloudinaryIdFromUrl = (url: string) => {
-	let arr = url.split('/')
-	let imageId = arr[arr.length - 1].split('.')[0]
-	imageId = 'moto/' + imageId
-
-	return imageId
+export const getCloudinaryIdFromUrl = (url: string | string[]) => {
+	if (typeof url === 'string') {
+		
+		let arr = url.split('/')
+		let imageId = arr[arr.length - 1].split('.')[0]
+		imageId = 'moto/' + imageId
+		
+		return imageId
+	} else if( Array.isArray(url)) {
+		return url.map((url) => {
+			let arr = url.split('/')
+			let imageId = arr[arr.length - 1].split('.')[0]
+			imageId = 'moto/' + imageId
+			
+			return imageId
+		})
+	}
 }

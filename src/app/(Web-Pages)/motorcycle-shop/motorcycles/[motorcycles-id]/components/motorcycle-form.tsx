@@ -1,7 +1,5 @@
 'use client'
 
-
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -124,10 +122,26 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 				res = await axios.put('/api/motorcycle-shop/motorcycles', data)
 			}
 
-			
 			toast.success(`${res.data.message} ${toastMessage}`)
 			router.push('/motorcycle-shop/motorcycles')
 			router.refresh()
+		} catch (error: any) {
+			if (error.message) {
+				return toast.error(error.message)
+			}
+		} finally {
+			setLoading(false)
+		}
+	}
+	const removeImageFn = async (url: string) => {
+		setLoading(true)
+		try {
+			const response = await axios.post('/api/motorcycle-shop/images', {
+				url,
+			})
+
+			toast.success(response.data.message)
+			return true
 		} catch (error: any) {
 			if (error.message) {
 				return toast.error(error.message)
@@ -146,28 +160,13 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 			const res = await axios.delete(
 				`/api/motorcycle-shop/motorcycles/${initialData.id}`
 			)
-
+			
 			toast.success(res.data.message)
 			router.push('/motorcycle-shop/motorcycles')
 			router.refresh()
-		} catch (error: any) {
-			if (error.message) {
-				return toast.error(error.message)
-			}
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	const removeImageFn = async (url: string) => {
-		setLoading(true)
-		try {
-			const response = await axios.post('/api/motorcycle-shop/images', {
-				url,
+			initialData.images.forEach(async (image) => {
+				await removeImageFn(image.url)
 			})
-
-			toast.success(response.data.message)
-			return true
 		} catch (error: any) {
 			if (error.message) {
 				return toast.error(error.message)
@@ -378,11 +377,10 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 						/>
 					</div>
 					<Button disabled={loading} type="submit">
-					{action}
+						{action}
 					</Button>
 				</form>
 			</Form>
-		
 		</>
 	)
 }

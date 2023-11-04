@@ -11,6 +11,9 @@ export async function POST(req:NextRequest, res:NextResponse) {
     console.log(urlID);
     
 	const imageId = getCloudinaryIdFromUrl(urlID)
+	if (typeof imageId !== 'string') {
+		return NextResponse.json({ message: 'No images to delete' })
+	}
 	const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!
 	const timestamp = new Date().getTime()
 	const apiKey = process.env.NEXT_CLOUDINARY_API_KEY!
