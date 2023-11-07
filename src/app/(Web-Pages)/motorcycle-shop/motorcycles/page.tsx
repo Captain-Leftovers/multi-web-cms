@@ -6,11 +6,11 @@ import getNotSoldMotoItems from '@/actions/getNotSoldMotoItems'
 import Carousel from '../components/carousel-moto'
 import { Separator } from '@/components/ui/separator'
 
+export const revalidate = 0
+
 export default async function MotorcyclesPage() {
 	const motoItems = await getNotSoldMotoItems()
-	 
 
-	
 	let itemError =
 		motoItems.error instanceof Error ? motoItems.error.message : null
 
