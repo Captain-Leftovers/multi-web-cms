@@ -20,7 +20,7 @@ export default function RootLayout({
 	return (
 		<ClerkProvider>
 			<html lang="en">
-				<body className={`${GeistSans.className} h-screen w-screen`}>
+				<body className={`${GeistSans.className}`}>
 					<ToastProvider />
 					<ModalProvider />
 					{children}
