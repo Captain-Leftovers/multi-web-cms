@@ -15,7 +15,7 @@ export default async function MotorcyclesPage() {
 		motoItems.error instanceof Error ? motoItems.error.message : null
 
 	return (
-		<main className="w-full min-h-full py-10 py-10">
+		<main className="w-full min-h-full py-10 px-4">
 			<Container>
 				<div className="flex justify-between items-center">
 					<Heading

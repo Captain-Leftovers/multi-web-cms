@@ -16,7 +16,7 @@ export default function NavbarActions({}: NavbarActionsProps) {
 	}
 
 	return (
-		<div className="ml-auto flex items-center gap-x-4 ">
+		<div className="md:ml-auto flex items-center gap-x-4 ">
 			<UserButton afterSignOutUrl="/" />
 		</div>
 	)

@@ -14,12 +14,12 @@ export default async function Navbar() {
 
 	return (
 		<div className="z-50  h-16">
-			<Container>
-				<div className="relative px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-around">
-					<MainNav stores={stores} />
+			<Container className='py-2'>
 					<Link href="/motorcycle-shop" className=" mx-auto">
-						<p className="font-bold text-xl">Moto Shop Dashboard</p>
+						<p className="font-bold text-xl text-center">Moto Shop Dashboard</p>
 					</Link>
+				<div className="relative px-4 sm:px-6 lg:px-8 flex items-center justify-around">
+					<MainNav stores={stores} />
 					<NavbarActions />
 				</div>
 			</Container>

@@ -7,7 +7,6 @@ import Image from 'next/image'
 import { CldUploadWidget } from 'next-cloudinary'
 import toast from 'react-hot-toast'
 
-
 type ImageUploadProps = {
 	onCoverChange: (value: string) => void
 	disabled: boolean
@@ -23,8 +22,11 @@ export default function ImageUpload({
 	onRemove,
 	value,
 	onCoverChange,
+	cover,
 }: ImageUploadProps) {
 	const [isMounted, setIsMounted] = useState(false)
+	const [coverImage, setCoverImage] = useState(cover)
+
 	useEffect(() => {
 		setIsMounted(true)
 	}, [])
@@ -35,10 +37,18 @@ export default function ImageUpload({
 		onChange(result.info.secure_url)
 	}
 
+	const newCover = (url: string) => {
+		setCoverImage(url)
+		onCoverChange(url)
+	}
+
 	if (!isMounted) return null
+
+	// TODO : fix nav not to underline motorcycles when in the form
 	return (
 		<div>
-			<div className="mb-4 flex items-center gap-6 flex-wrap">
+			
+			<div className="mb-4 flex justify-center   lg:justify-start items-center gap-6 flex-wrap">
 				{!value.length ? (
 					<Image
 						src={'/images/placeholder.png'}
@@ -52,7 +62,7 @@ export default function ImageUpload({
 					value?.map(({ url }) => (
 						<div
 							key={url}
-							className="relative w-[200px] h-[200px] overflow-hidden border border-gray-500 rounded-md p-4"
+							className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] overflow-hidden border border-gray-500 rounded-md p-4"
 						>
 							<Button
 								className="absolute top-2 right-2 z-10"
@@ -64,13 +74,18 @@ export default function ImageUpload({
 								<Trash className="h-4 w-4" />
 							</Button>
 							<Button
-								className="absolute bottom-2 left-2 z-10 bg-green-600 hover:bg-green-600/80"
+								className={`absolute ${
+									coverImage === url
+										? 'top-2.5 bg-green-500'
+										: 'bottom-2 bg-violet-500'
+								} left-2 z-10 hover:bg-violet-500/90 transition disabled:opacity-100`}
 								type="button"
-								onClick={() => onCoverChange(url)}
+								onClick={() => newCover(url)}
 								variant="destructive"
 								size="sm"
+								disabled={coverImage === url}
 							>
-								set as cover
+								{coverImage === url ? 'Cover' : 'Set Cover'}
 							</Button>
 							<Image
 								fill

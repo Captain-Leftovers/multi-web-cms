@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Separator } from '@/components/ui/separator'
 import Heading from '@/components/ui/heading'
 import AlertModal from '@/components/modals/alert-modal'
@@ -27,6 +27,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { useUser } from '@clerk/nextjs'
 import { MotoItemWithImagesType } from '@/app/(Web-Pages)/motorcycle-shop/moto-shop-types'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip'
+import FormInfo from './FormInfo'
 
 const formSchema = z.object({
 	make: z.string().min(2, 'Make must be at least 2 characters.'),
@@ -57,6 +64,11 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
 	const { user } = useUser()
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const searchParams = useSearchParams()
 
@@ -160,7 +172,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 			const res = await axios.delete(
 				`/api/motorcycle-shop/motorcycles/${initialData.id}`
 			)
-			
+
 			toast.success(res.data.message)
 			router.push('/motorcycle-shop/motorcycles')
 			router.refresh()
@@ -175,6 +187,9 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 			setLoading(false)
 		}
 	}
+	const currentCover = form.getValues('coverUrl')
+
+	if (!isMounted) return null
 
 	return (
 		<>
@@ -184,8 +199,10 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 				loading={loading}
 				onConfirm={onDelete}
 			/>
-			<div className="flex itmes-center justify-between">
-				<Heading title={title} description={description} />
+			<div className="flex itmes-center px-2">
+					<Heading title={title} description={description} />
+					<FormInfo />
+
 				{initialData && (
 					<Button
 						variant="destructive"
@@ -212,7 +229,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 								<FormControl>
 									<ImageUpload
 										value={field.value}
-										cover={form.getValues('coverUrl')}
+										cover={currentCover}
 										disabled={loading}
 										onChange={(url) => {
 											append({ url })
@@ -230,6 +247,15 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 															image.url === url
 													)
 												)
+
+												if (currentCover === url) {
+													form.setValue(
+														'coverUrl',
+														undefined
+													)
+												}
+												
+											
 											}
 										}}
 									/>
@@ -283,7 +309,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 								<FormControl>
 									<Textarea
 										rows={5}
-										className="w-2/3"
+										className="w-full md:w-2/3"
 										placeholder="Description"
 										{...field}
 										disabled={loading}
@@ -316,7 +342,6 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 											}
 										/>
 										<p>BGN</p>
-										<p>{typeof field.value}</p>
 									</div>
 								</FormControl>
 								<FormMessage />
@@ -326,53 +351,110 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 					<div className="flex justify-around">
 						<FormField
 							control={form.control}
+							name="featured"
+							render={({ field }) => (
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<FormItem className="">
+												<FormLabel></FormLabel>
+												<FormControl>
+													<Switch
+													disabled={loading}
+														checked={field.value}
+														onCheckedChange={
+															field.onChange
+														}
+													/>
+												</FormControl>
+												<FormDescription>
+													Featured
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Use this to mark as Featured</p>
+											<p>
+												Only Featured items appear in
+												the Moto-Repair website
+											</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
+							)}
+						/>
+						<FormField
+							control={form.control}
 							name="onHold"
 							render={({ field }) => (
-								<FormItem>
-									<FormLabel></FormLabel>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<FormDescription>On hold</FormDescription>
-									<FormMessage />
-								</FormItem>
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<FormItem>
+												<FormLabel></FormLabel>
+												<FormControl>
+													<Switch
+														disabled={loading}
+														checked={field.value}
+														onCheckedChange={
+															field.onChange
+														}
+													/>
+												</FormControl>
+												<FormDescription>
+													On hold
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Use this to mark as On Hold</p>
+											<p>
+												On Hold items don't appear in
+												the Moto-Repair website but they
+												are still visible in this
+												dashboard
+											</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
 							)}
 						/>
 						<FormField
 							control={form.control}
 							name="sold"
 							render={({ field }) => (
-								<FormItem>
-									<FormLabel></FormLabel>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<FormDescription>Sold</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="featured"
-							render={({ field }) => (
-								<FormItem className="">
-									<FormLabel></FormLabel>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-									<FormDescription>Featured</FormDescription>
-									<FormMessage />
-								</FormItem>
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<FormItem>
+												<FormLabel></FormLabel>
+												<FormControl>
+													<Switch
+													disabled={loading}
+														checked={field.value}
+														onCheckedChange={
+															field.onChange
+														}
+													/>
+												</FormControl>
+												<FormDescription>
+													Sold
+												</FormDescription>
+												<FormMessage />
+											</FormItem>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>Use this to mark as Sold</p>
+											<p>
+												Sold items don't appear in the
+												Moto-Repair website but they are
+												still visible in this dashboard
+											</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
 							)}
 						/>
 					</div>

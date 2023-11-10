@@ -4,7 +4,6 @@ export default async function getNotSoldMotoItems() {
   try {
     const motoItem = await prismadb.motoItem.findMany({
       where: {
-        sold: false
       },
       include: {
         images: true

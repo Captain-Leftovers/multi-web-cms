@@ -10,66 +10,83 @@ import { MotoItemWithImagesType } from '@/app/(Web-Pages)/motorcycle-shop/moto-s
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Expand } from 'lucide-react'
 
 export const revalidate = 0
 
 function getCoverImage(placeholder: string, imageData: MotoItemWithImagesType) {
-	if (imageData.coverUrl != null && imageData.images.length > 0 && imageData.images.findIndex(value => value.url === imageData.coverUrl) !== -1) {
+	if (
+		imageData.coverUrl != null &&
+		imageData.images.length > 0 &&
+		imageData.images.findIndex(
+			(value) => value.url === imageData.coverUrl
+		) !== -1
+	) {
 		return imageData.coverUrl
-		
 	} else if (imageData.images.length > 0) {
 		return imageData.images[0].url
 	} else {
 		return placeholder
 	}
-
 }
-export default function MotoImageCard({ imageData }: { imageData: MotoItemWithImagesType }) {
+export default function MotoImageCard({
+	imageData,
+}: {
+	imageData: MotoItemWithImagesType
+}) {
+	const cover = getCoverImage('/images/placeholder.png', imageData)
 
-
-		const cover = getCoverImage('/images/placeholder.png', imageData)
-
-
+	//TODO  fix mobile view-
 	return (
-		<div>
-			<Card className=" w-[400px] h-[400px] p-4 overflow-hidden bg-transparent  hover:scale-105 transition-all ease-out duration-500 hover:bg-stone-100 group">
-				<CardContent className="relative w-full h-4/5 flex flex-col justify-between">
-					<CardDescription className="truncate w-full overflow-hidden"></CardDescription>
+		<div className="">
+			<Link
+				className=" "
+				href={{
+					pathname: `/motorcycle-shop/motorcycles/${imageData.id}`,
+					query: { data: JSON.stringify(imageData) },
+				}}
+			>
+				<Card className="space-y-2 w-[380px] h-[380px] p-4 overflow-hidden bg-transparent  hover:scale-105 transition-all ease-out duration-500 hover:bg-stone-100 group">
+					<CardContent className="relative w-full h-4/5 flex flex-col justify-between">
+						<div className="z-50 flex">
+							{imageData.sold && (
+								<CardDescription className="ml-4 mt-4 bg-red-500 w-fit rounded-md px-2 py-1 text-white z-50">
+									Sold
+								</CardDescription>
+							)}
+							{imageData.onHold && (
+								<CardDescription className="ml-4 mt-4 bg-yellow-300 w-fit rounded-md px-2 py-1 text-black font-semibold z-50">
+									On Hold
+								</CardDescription>
+							)}
+							{
+						imageData.featured &&
+						<CardDescription className="ml-4 mt-4 bg-green-500 w-fit rounded-lg px-2 py-1 text-white z-50">Featured</CardDescription>
+					}
+						</div>
 
-					<Link
-						className=" z-50 w-11 h-11 hidden m-0 p-0 text-center rounded-full group-hover:block mx-auto hover:scale-110 transition-all  ease-out duration-500  items-center justify-center "
-						href={{
-							pathname: `/motorcycle-shop/motorcycles/${imageData.id}`,
-							query: { data: JSON.stringify(imageData) },
-						}}
-					>
-						<Expand className="w-10 h-10 bg-stone-100/50 rounded-full p-1 m-0" />
-					</Link>
-					<Image
-						src={
-							cover
-						}
-						alt={imageData.model != null ? imageData.model : ''}
-						fill
-						sizes='full'
-						className="object-cover object-center rounded-lg"
-					/>
-				</CardContent>
-				<CardFooter className="flex justify-between items-center ">
-					<CardHeader className="overflow-hidden pl-0">
-						<CardTitle className="truncate w-full overflow-hidden">
-							{!!imageData.make && imageData.make}
-						</CardTitle>
-						<CardDescription className="truncate w-full overflow-hidden text-gray-600">
-							{!!imageData.model && imageData.model}
+						<Image
+							src={cover}
+							alt={imageData.model != null ? imageData.model : ''}
+							fill
+							sizes="(max-width: 640px) 100vw, (max-width: 750px) 50vw, 33vw"
+							className="object-cover object-center rounded-lg"
+						/>
+					</CardContent>
+					<CardFooter className="flex justify-between items-center ">
+						<CardHeader className="overflow-hidden p-0">
+							<CardTitle className="truncate w-full overflow-hidden">
+								{!!imageData.make && imageData.make}
+							</CardTitle>
+							<CardDescription className="truncate w-full overflow-hidden text-gray-600">
+								{!!imageData.model && imageData.model}
+							</CardDescription>
+						</CardHeader>
+						<CardDescription className="text-black font-semibold">
+							{imageData.price}
 						</CardDescription>
-					</CardHeader>
-					<CardDescription className="text-black font-semibold">
-						{imageData.price}
-					</CardDescription>
-				</CardFooter>
-			</Card>
+					</CardFooter>
+				</Card>
+			</Link>
 		</div>
 	)
 }
