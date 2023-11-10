@@ -203,7 +203,10 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 			<div className="flex itmes-center px-2">
 				<Heading title={title} description={description} />
 				<FormInfo open={openInfo} onClose={() => setOpenInfo(false)} />
-				<Button className="h-10 w-10 bg-transparent text-black p-0 hover:bg-transparent group rounded-full mx-1 mr-auto" onClick={()=> setOpenInfo(true)}>
+				<Button
+					className="h-10 w-10 bg-transparent text-black p-0 hover:bg-transparent group rounded-full mx-1 mr-auto"
+					onClick={() => setOpenInfo(true)}
+				>
 					<Info
 						size={28}
 						className="m-2  group-hover:scale-125 animate-pulse transition"
