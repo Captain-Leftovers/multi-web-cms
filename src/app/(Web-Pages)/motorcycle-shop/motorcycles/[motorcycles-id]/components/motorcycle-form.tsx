@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react'
 import { Separator } from '@/components/ui/separator'
 import Heading from '@/components/ui/heading'
 import AlertModal from '@/components/modals/alert-modal'
-import { Trash } from 'lucide-react'
+import { Info, Trash } from 'lucide-react'
 import ImageUpload from '@/components/ui/image-upload'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -61,6 +61,7 @@ type formValuesType = z.infer<typeof formSchema>
 
 export default function MotorcycleForm({}: MotorcycleFormProps) {
 	const [open, setOpen] = useState(false)
+	const [openInfo, setOpenInfo] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const router = useRouter()
 	const { user } = useUser()
@@ -200,9 +201,14 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 				onConfirm={onDelete}
 			/>
 			<div className="flex itmes-center px-2">
-					<Heading title={title} description={description} />
-					<FormInfo />
-
+				<Heading title={title} description={description} />
+				<FormInfo open={openInfo} onClose={() => setOpenInfo(false)} />
+				<Button className="h-10 w-10 bg-transparent text-black p-0 hover:bg-transparent group rounded-full mx-1 mr-auto" onClick={()=> setOpenInfo(true)}>
+					<Info
+						size={28}
+						className="m-2  group-hover:scale-125 animate-pulse transition"
+					/>
+				</Button>
 				{initialData && (
 					<Button
 						variant="destructive"
@@ -254,8 +260,6 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 														undefined
 													)
 												}
-												
-											
 											}
 										}}
 									/>
@@ -360,7 +364,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 												<FormLabel></FormLabel>
 												<FormControl>
 													<Switch
-													disabled={loading}
+														disabled={loading}
 														checked={field.value}
 														onCheckedChange={
 															field.onChange
@@ -432,7 +436,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 												<FormLabel></FormLabel>
 												<FormControl>
 													<Switch
-													disabled={loading}
+														disabled={loading}
 														checked={field.value}
 														onCheckedChange={
 															field.onChange
