@@ -418,7 +418,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 										<TooltipContent>
 											<p>Use this to mark as On Hold</p>
 											<p>
-												On Hold items don't appear in
+												On Hold items don&apos;t appear in
 												the Moto-Repair website but they
 												are still visible in this
 												dashboard
@@ -455,7 +455,7 @@ export default function MotorcycleForm({}: MotorcycleFormProps) {
 										<TooltipContent>
 											<p>Use this to mark as Sold</p>
 											<p>
-												Sold items don't appear in the
+												Sold items don&apos;t appear in the
 												Moto-Repair website but they are
 												still visible in this dashboard
 											</p>
