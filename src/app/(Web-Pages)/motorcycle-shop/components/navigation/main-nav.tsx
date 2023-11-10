@@ -36,6 +36,10 @@ type MainNavProps = {
 export default function MainNav({ stores }: MainNavProps) {
 	const storeModal = usePickStoreModal()
 
+	const path = usePathname()
+	
+
+
 	return (
 		<nav className="mx-6 flex items-center space-x-4 lg:space-x-6">
 			<div className="flex items-center">

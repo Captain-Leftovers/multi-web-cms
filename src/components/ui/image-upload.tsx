@@ -44,7 +44,6 @@ export default function ImageUpload({
 
 	if (!isMounted) return null
 
-	// TODO : fix nav not to underline motorcycles when in the form
 	return (
 		<div>
 			

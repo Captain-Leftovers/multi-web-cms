@@ -35,7 +35,6 @@ export default function MotoImageCard({
 }) {
 	const cover = getCoverImage('/images/placeholder.png', imageData)
 
-	//TODO  fix mobile view-
 	return (
 		<div className="">
 			<Link

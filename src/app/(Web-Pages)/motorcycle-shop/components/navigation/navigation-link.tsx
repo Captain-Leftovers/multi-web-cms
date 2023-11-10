@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import Link, { LinkProps } from 'next/link'
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 
 type NavigationLinkProps = LinkProps & {
 	targetSegment: string | null
@@ -20,8 +20,10 @@ const NavigationLink: React.FC<NavigationLinkProps> = ({
 	noSpan,
 	...rest
 }) => {
-	const activeSegment = useSelectedLayoutSegment()
-	const isActive = targetSegment === activeSegment
+	const path = usePathname()
+	// const activeSegment = useSelectedLayoutSegment()
+	// const isActive = targetSegment === activeSegment
+	const isActive = path === rest.href
 
 	return (
 		<Link className={cn(className, isActiveClassName)} {...rest}>
