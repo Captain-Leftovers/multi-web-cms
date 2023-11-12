@@ -30,6 +30,11 @@ export default function PickStoreModal() {
 							key={store.id}
 							onClick={() => onStoreClick(store.path)}
 							className="w-full"
+							variant={
+								store.name === 'Admin'
+									? 'destructive'
+									: 'default'
+							}
 						>
 							{store.name}
 						</Button>
@@ -37,7 +42,7 @@ export default function PickStoreModal() {
 				) : (
 					<div className="flex flex-col gap-4 mx-auto sm:px-10 py-4">
 						<p className="text-center">
-							You don$apos;t have access to any stores yet.
+							You don&apos;t have access to any stores yet.
 						</p>
 						<p className="text-center">
 							Contact your administrator to get access.
@@ -45,7 +50,10 @@ export default function PickStoreModal() {
 						<p className="text-center">
 							Or sign in to create a store.
 						</p>
-						<Button onClick={() => signOut()} className="w-full mt-4">
+						<Button
+							onClick={() => signOut()}
+							className="w-full mt-4"
+						>
 							Sign Out
 						</Button>
 					</div>

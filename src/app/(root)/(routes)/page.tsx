@@ -1,20 +1,41 @@
+import { storeUserInDb } from '@/actions/admin-actions'
 import getStoresWithAccess from '@/actions/getStoresWithAccess'
 import StorSwitcher from '@/components/stor-switcher'
-import { auth } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 
 export default async function Home() {
-	const { userId } = auth()
+	const userObj = await currentUser()
 
-	if (!userId) {
+	const userId = userObj?.id
+	if (!userObj) {
 		redirect('/sign-in')
+	}
+	const email = userObj.emailAddresses.find(
+		(email) => email.id === userObj.primaryEmailAddressId
+	)
+
+	if (!userId || email === undefined) {
+		redirect('/sign-in')
+	}
+
+	const userForDb = {
+		id: userId,
+		name: userObj.firstName + ' ' + userObj.lastName,
+		email: email.emailAddress,
+	}
+
+	try {
+		storeUserInDb(userForDb)
+	} catch (error) {
+		console.log(error)
 	}
 
 	try {
 		const stores = await getStoresWithAccess(userId)
 
 		if (!stores) {
-			return <div>You don$quot;t have access to any stores</div>
+			return null
 		}
 		return <StorSwitcher stores={stores} />
 	} catch (error) {

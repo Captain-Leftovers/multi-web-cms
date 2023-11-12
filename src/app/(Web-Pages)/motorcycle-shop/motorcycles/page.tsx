@@ -2,14 +2,14 @@ import Container from '@/components/ui/container'
 import Heading from '@/components/ui/heading'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import getNotSoldMotoItems from '@/actions/getNotSoldMotoItems'
+import { getAllMotoItems} from '@/app/(Web-Pages)/motorcycle-shop/actions/getMotoItems'
 import Carousel from '../components/carousel-moto'
 import { Separator } from '@/components/ui/separator'
 
 export const revalidate = 0
 
 export default async function MotorcyclesPage() {
-	const motoItems = await getNotSoldMotoItems()
+	const motoItems = await getAllMotoItems()
 
 	let itemError =
 		motoItems.error instanceof Error ? motoItems.error.message : null
