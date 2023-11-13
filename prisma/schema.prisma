@@ -34,6 +34,7 @@ model UserStore {
   store   Store  @relation(fields: [storeId], references: [id])
 
   @@index([storeId, userId])
+  @@unique([userId, storeId])
 }
 
 // Moto Shop  ------------------------

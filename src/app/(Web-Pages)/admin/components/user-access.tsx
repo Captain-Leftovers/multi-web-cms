@@ -1,8 +1,6 @@
 'use client'
 
 import { Store, User, UserStore } from '@prisma/client'
-import { useState } from 'react'
-import EditStoreAccessModal from './modal/edit-store-access-modal'
 import { useEditStoreAccessModal } from '@/hooks/useEditStoreAccessModal'
 
 type FormInfoProps = {
@@ -13,8 +11,7 @@ type FormInfoProps = {
 	}
 }
 export default function UserAccess({ data }: FormInfoProps) {
-	const [open , setOpen] = useState(false)
-	const [loading, setLoading] = useState(false)
+
 	const accessModal = useEditStoreAccessModal()
 	
 	const storeAccess = (id:string) => {

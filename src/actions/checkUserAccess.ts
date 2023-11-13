@@ -1,19 +1,19 @@
 import { currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
+import getStoresWithAccess from './getStoresWithAccess'
 
 export default async function checkUserAccess(path: string) {
-	
-	
 	const user = await currentUser()
 
 	if (!user) {
 		redirect('/')
 	}
-	const meta = user.privateMetadata.accessTo
 
-	if (!Array.isArray(meta) || (Array.isArray(meta) && !meta.includes(path))) {
-		redirect('/')
+	const accessStores = await getStoresWithAccess(user.id)
+
+	if (accessStores?.some((store) => store.path === path)) {
+		return { userId: user.id }
 	}
 
-	return { userId: user.id, meta }
+	redirect('/')
 }

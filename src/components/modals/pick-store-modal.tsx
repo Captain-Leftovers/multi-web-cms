@@ -3,15 +3,19 @@
 import { usePickStoreModal } from '@/hooks/use-pick-store-modal'
 import { Modal } from '../ui/modal'
 import { Button } from '../ui/button'
-import { useClerk } from '@clerk/nextjs'
+import { useClerk, UserButton } from '@clerk/nextjs'
+
 
 export default function PickStoreModal() {
 	const pickStoreModal = usePickStoreModal()
 	const stores = usePickStoreModal((state) => state.stores)
 
+	
 	const { signOut } = useClerk()
 
 	const onStoreClick = async (path: string) => {
+		console.log(path);
+		
 		window.location.assign(`/${path}`)
 	}
 
@@ -26,6 +30,7 @@ export default function PickStoreModal() {
 			<div className="flex flex-col gap-4 mx-auto sm:px-10 py-4">
 				{stores?.length !== 0 ? (
 					stores?.map((store) => (
+
 						<Button
 							key={store.id}
 							onClick={() => onStoreClick(store.path)}

@@ -21,12 +21,14 @@ export default async function Home() {
 
 	const userForDb = {
 		id: userId,
-		name: userObj.firstName + ' ' + userObj.lastName,
+		name: userObj.firstName,
 		email: email.emailAddress,
 	}
 
 	try {
-		storeUserInDb(userForDb)
+		const userDb =await  storeUserInDb(userForDb)
+
+		
 	} catch (error) {
 		console.log(error)
 	}
@@ -37,6 +39,9 @@ export default async function Home() {
 		if (!stores) {
 			return null
 		}
+
+		
+
 		return <StorSwitcher stores={stores} />
 	} catch (error) {
 		console.log(error)
